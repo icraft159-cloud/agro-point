@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGRO POINT - Placar</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/css/inter-700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/css/inter-900.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    min-height: 100vh;
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 2px solid rgba(255, 107, 0, 0.5);
+  }
+
+  .header h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ff6b00, #ffc107);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .main-content {
+    display: flex;
+    flex: 1;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .live-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+  }
+
+  .live-label { font-size: 1.5rem; color: #a0aec0; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; }
+  .live-name { font-size: 3.5rem; font-weight: 900; color: #fff; margin-bottom: 20px; text-align: center; min-height: 80px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+  .live-timer { font-size: 8rem; font-weight: 900; font-variant-numeric: tabular-nums; background: linear-gradient(135deg, #fff, #ffc107); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 60px rgba(255, 193, 7, 0.4); line-height: 1; }
+  
+  .live-status { margin-top: 20px; padding: 10px 30px; border-radius: 50px; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+  .status-waiting { background: rgba(160, 174, 192, 0.2); color: #a0aec0; }
+  .status-running { background: rgba(72, 187, 120, 0.3); color: #48bb78; animation: pulse 1.5s infinite; }
+  .status-finished { background: rgba(255, 107, 0, 0.3); color: #ff6b00; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+  .ranking-section {
+    flex: 1.2;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ranking-title { font-size: 2rem; font-weight: 900; text-align: center; margin-bottom: 20px; color: #ffc107; text-transform: uppercase; letter-spacing: 2px; }
+  
+  .ranking-list { flex: 1; overflow-y: auto; padding-right: 10px; }
+  .ranking-list::-webkit-scrollbar { width: 8px; }
+  .ranking-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+  .ranking-list::-webkit-scrollbar-thumb { background: rgba(255, 107, 0, 0.5); border-radius: 4px; }
+
+  .ranking-item { display: flex; align-items: center; padding: 15px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; margin-bottom: 12px; border-left: 4px solid transparent; animation: slideIn 0.5s ease-out; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+  .ranking-item.top-1 { background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), transparent); border-left-color: #ffd700; }
+  .ranking-item.top-2 { background: linear-gradient(90deg, rgba(192, 192, 192, 0.15), transparent); border-left-color: #c0c0c0; }
+  .ranking-item.top-3 { background: linear-gradient(90deg, rgba(205, 127, 50, 0.15), transparent); border-left-color: #cd7f32; }
+
+  .rank-pos { font-size: 1.5rem; font-weight: 900; width: 50px; text-align: center; color: #a0aec0; }
+  .top-1 .rank-pos { color: #ffd700; font-size: 2rem; }
+  .top-2 .rank-pos { color: #c0c0c0; font-size: 1.8rem; }
+  .top-3 .rank-pos { color: #cd7f32; font-size: 1.8rem; }
+
+  .rank-name { flex: 1; font-size: 1.8rem; font-weight: 700; padding: 0 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rank-time { font-size: 2rem; font-weight: 900; font-variant-numeric: tabular-nums; color: #ff6b00; }
+
+  .empty-msg { text-align: center; color: #a0aec0; font-size: 1.5rem; margin-top: 50px; opacity: 0.7; }
+
+  .connection-indicator { position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; }
+  .conn-ok { background: rgba(72, 187, 120, 0.2); color: #48bb78; border: 1px solid #48bb78; }
+  .conn-err { background: rgba(245, 101, 101, 0.2); color: #f56565; border: 1px solid #f56565; }
+
+  @media (max-width: 1024px) {
+    .main-content { flex-direction: column; }
+    .live-timer { font-size: 5rem; }
+    .live-name { font-size: 2.5rem; }
+    .rank-name { font-size: 1.4rem; }
+    .rank-time { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>🚜 AGRO POINT - RANKING</h1>
+  </div>
+
+  <div class="main-content">
+    <div class="live-section">
+      <div class="live-label">Participante Atual</div>
+      <div class="live-name" id="liveName">Aguardando...</div>
+      <div class="live-timer" id="liveTimer">00:00.00</div>
+      <div class="live-status status-waiting" id="liveStatus">Aguardando Início</div>
+    </div>
+
+    <div class="ranking-section">
+      <div class="ranking-title">🏆 Melhores Tempos</div>
+      <div class="ranking-list" id="rankingList">
+        <div class="empty-msg">Nenhum registro ainda</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connection-indicator conn-err" id="connStatus">🔴 Desconectado</div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    /* global io */
+    // ATENÇÃO: Se estiver em redes diferentes, troque 'http://localhost:3000' pelo seu link do Ngrok ou da Nuvem.
+    // Se estiver na mesma rede local e usando o server.js atualizado, pode deixar apenas: const socket = io();
+    const socket = io();
+    
+    const liveName = document.getElementById('liveName');
+    const liveTimer = document.getElementById('liveTimer');
+    const liveStatus = document.getElementById('liveStatus');
+    const rankingList = document.getElementById('rankingList');
+    const connStatus = document.getElementById('connStatus');
+
+    socket.on('connect', () => {
+      connStatus.textContent = '🟢 Conectado ao Administrador';
+      connStatus.className = 'connection-indicator conn-ok';
+    });
+
+    socket.on('disconnect', () => {
+      connStatus.textContent = '🔴 Desconectado';
+      connStatus.className = 'connection-indicator conn-err';
+    });
+
+    socket.on('syncState', (data) => {
+      updateLive(data.live);
+      updateRanking(data.ranking);
+    });
+
+    socket.on('liveTimerUpdated', (data) => { updateLive(data); });
+    socket.on('rankingUpdated', (ranking) => { updateRanking(ranking); });
+    socket.on('rankingCleared', () => { rankingList.innerHTML = '<div class="empty-msg">Nenhum registro ainda</div>'; });
+
+    function updateLive(data) {
+      if (data.isRunning) {
+        liveName.textContent = data.name || 'Participante';
+        liveTimer.textContent = data.time;
+        liveStatus.textContent = 'EM PROVA';
+        liveStatus.className = 'live-status status-running';
+      } else if (data.name === '' && data.time === '00:00.00') {
+        liveName.textContent = 'Aguardando...';
+        liveTimer.textContent = '00:00.00';
+        liveStatus.textContent = 'Aguardando Início';
+        liveStatus.className = 'live-status status-waiting';
+      } else {
+        liveStatus.textContent = 'PROVA FINALIZADA';
+        liveStatus.className = 'live-status status-finished';
+      }
+    }
+
+    function updateRanking(ranking) {
+      if (!ranking || ranking.length === 0) {
+        rankingList.innerHTML = '<div class="empty-msg">Nenhum registro ainda</div>';
+        return;
+      }
+
+      rankingList.innerHTML = ranking.map((entry, index) => {
+        const pos = index + 1;
+        let topClass = '';
+        let posDisplay = pos;
+        if (pos === 1) { topClass = 'top-1'; posDisplay = '🥇'; }
+        else if (pos === 2) { topClass = 'top-2'; posDisplay = '🥈'; }
+        else if (pos === 3) { topClass = 'top-3'; posDisplay = '🥉'; }
+
+        const minutes = Math.floor(entry.time / 60000);
+        const seconds = Math.floor((entry.time % 60000) / 1000);
+        const cs = Math.floor((entry.time % 1000) / 10);
+        const timeStr = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+
+        return `
+          <div class="ranking-item ${topClass}">
+            <div class="rank-pos">${posDisplay}</div>
+            <div class="rank-name">${escapeHtml(entry.name)}</div>
+            <div class="rank-time">${timeStr}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Rola para o último item quando atualiza
+      setTimeout(() => {
+        rankingList.scrollTo({ top: rankingList.scrollHeight, behavior: 'smooth' });
+      }, 100);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // === ROLAGEM AUTOMÁTICA CONTÍNUA ===
+    let scrollDirection = 'down';
+    let scrollPaused = false;
+
+    function autoScroll() {
+      if (scrollPaused) return;
+      const maxScroll = rankingList.scrollHeight - rankingList.clientHeight;
+      if (maxScroll <= 0) return; 
+
+      if (scrollDirection === 'down') {
+        rankingList.scrollTop += 1; 
+        if (rankingList.scrollTop >= maxScroll) {
+          scrollDirection = 'up';
+          setTimeout(() => { scrollDirection = 'up'; }, 2000); 
+        }
+      } else {
+        rankingList.scrollTop -= 1;
+        if (rankingList.scrollTop <= 0) {
+          scrollDirection = 'down';
+          setTimeout(() => { scrollDirection = 'down'; }, 2000); 
+        }
+      }
+    }
+
+    setInterval(autoScroll, 30);
+
+    rankingList.addEventListener('mouseenter', () => { scrollPaused = true; });
+    rankingList.addEventListener('mouseleave', () => { scrollPaused = false; });
+  </script>
+</body>
+</html>
